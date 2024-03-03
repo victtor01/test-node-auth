@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { User } from "../../entities/User";
-import { IUserReposity } from "../users-repository";
+import { User } from "../../entities/user";
+import { IUserRepository } from "../users-repository";
 
-export class PrismaUsersRepository implements IUserReposity {
+export class PrismaUsersRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async findByEmail(email: string): Promise<User> {

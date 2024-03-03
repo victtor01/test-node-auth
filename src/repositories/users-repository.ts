@@ -1,6 +1,6 @@
-import { User } from "../entities/User";
+import { User } from "../entities/user";
 
-export interface IUserReposity {
+export interface IUserRepository {
   findByEmail(email: string): Promise<User>;
   store(data: User): Promise<User>;
 }

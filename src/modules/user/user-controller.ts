@@ -1,14 +1,22 @@
-import { User } from "../../entities/User";
-import { IUserReposity } from "../../repositories/users-repository";
+import { hash } from "bcrypt";
+import { User } from "../../entities/user";
+import { IUserRepository } from "../../repositories/users-repository";
 import { Request, Response } from "express";
 
 class UserController {
-  constructor(private readonly userRepo: IUserReposity) {}
+  constructor(private readonly userRepo: IUserRepository) {}
+
+  private readonly saltsPasswordHash = 8;
+
+  private hashPassword(password: string) {
+    return hash(password, this.saltsPasswordHash);
+  }
 
   async create(req: Request, res: Response) {
     try {
       const { email, name, password } = req.body;
 
+      // confirm data of body
       if (!email || !name || !password) {
         return res.status(400).json({
           error: "Campos faltando!",
@@ -18,16 +26,24 @@ class UserController {
       //user exists
       const userExists = await this.userRepo.findByEmail(email);
 
+      // if user exists
       if (userExists?.email) {
         return res.status(400).json({
           error: "Email já cadastrado!",
         });
       }
 
-      // create DTO
-      const user: User = new User(req.body);
+      // bcrypt password of user
+      const pass = await this.hashPassword(password);
 
-      // find a user where email equal email in body request
+      // create user entity
+      const user: User = new User({
+        password: pass,
+        name,
+        email,
+      });
+
+      // create user
       await this.userRepo.store(user);
 
       // if user exists in database
@@ -41,6 +57,7 @@ class UserController {
       });
     }
   }
+
 }
 
 export { UserController };
