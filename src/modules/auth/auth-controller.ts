@@ -31,7 +31,7 @@ class AuthController {
     const { password: passhash } = userExists;
 
     if (!(await bcrypt.compare(password, passhash))) {
-      return res.status(400).json({
+      return res.status(403).json({
         message: "Senha incorreta!",
         error: true,
       });

@@ -15,6 +15,12 @@ describe("AuthController tests", () => {
     findByEmail: findByEmailMock,
   }));
 
+  const response: Response = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn().mockReturnThis(),
+    send: jest.fn(),
+  } as any;
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -28,11 +34,9 @@ describe("AuthController tests", () => {
       },
     } as Request;
 
-    const response: Response = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    } as any;
+    const authController = new AuthController(
+      new PrismaUsersRepository(prismaService)
+    );
 
     findByEmailMock.mockResolvedValueOnce({
       id: uuidv4(),
@@ -40,10 +44,6 @@ describe("AuthController tests", () => {
       email: "teste@gmail.com",
       password: await bcrypt.hash("teste", 8),
     });
-
-    const authController = new AuthController(
-      new PrismaUsersRepository(prismaService)
-    );
 
     // Act
     await authController.auth(request, response);
@@ -66,12 +66,6 @@ describe("AuthController tests", () => {
       },
     } as Request;
 
-    const response: Response = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-      json: jest.fn().mockReturnThis(),
-    } as any;
-
     const userRepo = new PrismaUsersRepository(prismaService);
     const authController = new AuthController(userRepo);
 
@@ -83,6 +77,34 @@ describe("AuthController tests", () => {
 
     expect(response.json).toHaveBeenCalledWith({
       message: "Usuário não existe!",
+      error: true,
+    });
+  });
+
+  it("It should return 403 due to the incorrect password.", async () => {
+    const request: Request = {
+      body: {
+        email: "test@gmail.com",
+        password: "wrong password.",
+      },
+    } as Request;
+
+    findByEmailMock.mockResolvedValueOnce({
+      id: uuidv4(),
+      name: "teste",
+      email: "teste@gmail.com",
+      password: await bcrypt.hash("teste", 8),
+    });
+
+    const userRepo = new PrismaUsersRepository(prismaService);
+    const authController = new AuthController(userRepo);
+
+    // Act
+    await authController.auth(request, response);
+
+    expect(response.status).toHaveBeenCalledWith(403);
+    expect(response.json).toHaveBeenCalledWith({
+      message: "Senha incorreta!",
       error: true,
     });
   });
