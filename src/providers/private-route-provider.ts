@@ -10,7 +10,10 @@ const PrivateRouteProvider = (
   res: Response,
   next: NextFunction
 ) => {
+<<<<<<< HEAD
   // get token of header request
+=======
+>>>>>>> 575cee0e09241e218d94771ee4929a7efcfb2e15
   const token = req?.headers?.authorization
     ?.replace("Bearer", "")
     .replace(" ", "");
@@ -25,7 +28,10 @@ const PrivateRouteProvider = (
   try {
     // decode
     const decode = jwt.verify(token, process.env.PRIVATE_KEY);
+<<<<<<< HEAD
     // set user decode of request
+=======
+>>>>>>> 575cee0e09241e218d94771ee4929a7efcfb2e15
     (req as RequestUser).user = decode;
     next();
   } catch (error) {
