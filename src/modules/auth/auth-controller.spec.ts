@@ -18,10 +18,7 @@ describe("AuthController tests", () => {
     findByEmail: findByEmailMock,
   }));
 
-<<<<<<< HEAD
   // create response
-=======
->>>>>>> 575cee0e09241e218d94771ee4929a7efcfb2e15
   const response: Response = {
     status: jest.fn().mockReturnThis(),
     json: jest.fn().mockReturnThis(),
@@ -41,10 +38,7 @@ describe("AuthController tests", () => {
       },
     } as Request;
 
-<<<<<<< HEAD
     // get authController
-=======
->>>>>>> 575cee0e09241e218d94771ee4929a7efcfb2e15
     const authController = new AuthController(
       new PrismaUsersRepository(prismaService)
     );
@@ -78,10 +72,7 @@ describe("AuthController tests", () => {
       },
     } as Request;
 
-<<<<<<< HEAD
     // get autController
-=======
->>>>>>> 575cee0e09241e218d94771ee4929a7efcfb2e15
     const userRepo = new PrismaUsersRepository(prismaService);
     const authController = new AuthController(userRepo);
 
@@ -97,10 +88,7 @@ describe("AuthController tests", () => {
   });
 
   it("It should return 403 due to the incorrect password.", async () => {
-<<<<<<< HEAD
     // create request
-=======
->>>>>>> 575cee0e09241e218d94771ee4929a7efcfb2e15
     const request: Request = {
       body: {
         email: "test@gmail.com",
@@ -108,10 +96,7 @@ describe("AuthController tests", () => {
       },
     } as Request;
 
-<<<<<<< HEAD
     // sumule
-=======
->>>>>>> 575cee0e09241e218d94771ee4929a7efcfb2e15
     findByEmailMock.mockResolvedValueOnce({
       id: uuidv4(),
       name: "teste",
@@ -119,20 +104,14 @@ describe("AuthController tests", () => {
       password: await bcrypt.hash("teste", 8),
     });
 
-<<<<<<< HEAD
     // get authController
-=======
->>>>>>> 575cee0e09241e218d94771ee4929a7efcfb2e15
     const userRepo = new PrismaUsersRepository(prismaService);
     const authController = new AuthController(userRepo);
 
     // Act
     await authController.auth(request, response);
 
-<<<<<<< HEAD
     // test
-=======
->>>>>>> 575cee0e09241e218d94771ee4929a7efcfb2e15
     expect(response.status).toHaveBeenCalledWith(403);
     expect(response.json).toHaveBeenCalledWith({
       message: "Senha incorreta!",
