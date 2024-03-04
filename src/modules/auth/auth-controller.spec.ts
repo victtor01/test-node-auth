@@ -8,12 +8,22 @@ import bcrypt from "bcrypt";
 jest.mock("../../repositories/prisma/prisma-users-repository");
 
 describe("AuthController tests", () => {
+  // create prisma mock
   const PrismaUsersRepositoryMock = PrismaUsersRepository as jest.Mock;
+  //create functino mock
   const findByEmailMock = jest.fn();
 
+  // implement prisma users repository
   PrismaUsersRepositoryMock.mockImplementation(() => ({
     findByEmail: findByEmailMock,
   }));
+
+  // create response
+  const response: Response = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn().mockReturnThis(),
+    send: jest.fn(),
+  } as any;
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -28,12 +38,12 @@ describe("AuthController tests", () => {
       },
     } as Request;
 
-    const response: Response = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    } as any;
+    // get authController
+    const authController = new AuthController(
+      new PrismaUsersRepository(prismaService)
+    );
 
+    // simule
     findByEmailMock.mockResolvedValueOnce({
       id: uuidv4(),
       name: "teste",
@@ -41,14 +51,10 @@ describe("AuthController tests", () => {
       password: await bcrypt.hash("teste", 8),
     });
 
-    const authController = new AuthController(
-      new PrismaUsersRepository(prismaService)
-    );
-
     // Act
     await authController.auth(request, response);
 
-    // Assert
+    // test
     expect(response.status).toHaveBeenCalledWith(200);
     expect(response.json).toHaveBeenCalledWith({
       error: false,
@@ -66,23 +72,49 @@ describe("AuthController tests", () => {
       },
     } as Request;
 
-    const response: Response = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-      json: jest.fn().mockReturnThis(),
-    } as any;
-
+    // get autController
     const userRepo = new PrismaUsersRepository(prismaService);
     const authController = new AuthController(userRepo);
 
     // Act
     await authController.auth(request, response);
 
-    // Assert
+    // test
     expect(response.status).toHaveBeenCalledWith(400);
-
     expect(response.json).toHaveBeenCalledWith({
       message: "Usuário não existe!",
+      error: true,
+    });
+  });
+
+  it("It should return 403 due to the incorrect password.", async () => {
+    // create request
+    const request: Request = {
+      body: {
+        email: "test@gmail.com",
+        password: "wrong password.",
+      },
+    } as Request;
+
+    // sumule
+    findByEmailMock.mockResolvedValueOnce({
+      id: uuidv4(),
+      name: "teste",
+      email: "teste@gmail.com",
+      password: await bcrypt.hash("teste", 8),
+    });
+
+    // get authController
+    const userRepo = new PrismaUsersRepository(prismaService);
+    const authController = new AuthController(userRepo);
+
+    // Act
+    await authController.auth(request, response);
+
+    // test
+    expect(response.status).toHaveBeenCalledWith(403);
+    expect(response.json).toHaveBeenCalledWith({
+      message: "Senha incorreta!",
       error: true,
     });
   });

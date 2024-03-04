@@ -10,8 +10,10 @@ class AuthController {
   private PRIVATE_KEY = process.env.PRIVATE_KEY;
 
   async auth(req: Request, res: Response) {
+    // get email and password
     const { email, password } = req.body;
 
+    // verify props
     if (!email || !password) {
       return res.status(400).json({
         message: "Campos faltando!",
@@ -19,8 +21,10 @@ class AuthController {
       });
     }
 
+    // get user of database
     const userExists: User | undefined = await this.userRepo.findByEmail(email);
 
+    // verify if user exists
     if (!userExists?.email) {
       return res.status(400).json({
         message: "Usuário não existe!",
@@ -28,15 +32,18 @@ class AuthController {
       });
     }
 
+    // get passowrd of user
     const { password: passhash } = userExists;
 
+    // verify password
     if (!(await bcrypt.compare(password, passhash))) {
-      return res.status(400).json({
+      return res.status(403).json({
         message: "Senha incorreta!",
         error: true,
       });
     }
 
+    // create data for jwt
     const dataSign = {
       id: userExists.id,
       name: userExists.name,
@@ -47,6 +54,7 @@ class AuthController {
       expiresIn: 3600,
     });
 
+    //return response
     return res.status(200).json({
       error: false,
       message: "usuário logado.",

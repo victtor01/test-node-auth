@@ -9,6 +9,7 @@ describe("Prisma users repository tests", () => {
   });
 
   it("should create a user.", async () => {
+    // create request
     const request: Request = {
       body: {
         name: "teste22",
@@ -17,12 +18,14 @@ describe("Prisma users repository tests", () => {
       },
     } as Request;
 
+    // create response
     const response = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
       json: jest.fn(),
     } as unknown as Response;
 
+    // simule
     PrismaUsersRepository.prototype.findByEmail = jest
       .fn()
       .mockResolvedValueOnce(null);
@@ -30,10 +33,12 @@ describe("Prisma users repository tests", () => {
       .fn()
       .mockImplementationOnce(async (user) => user);
 
+    // get resopnse of userController
     const userRepo = new PrismaUsersRepository(prismaService);
     const userController = new UserController(userRepo);
     await userController.create(request, response);
 
+    // test
     expect(response.status).toHaveBeenCalledWith(200);
   });
 });

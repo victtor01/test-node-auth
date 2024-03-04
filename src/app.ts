@@ -13,8 +13,8 @@ app.use(express.json());
 app.use(userRouter);
 app.use(authRouter);
 
+// test private route
 app.use("*", PrivateRouteProvider);
-
 app.get("/home", (req: RequestUser, res: Response) => {
   return res.status(200).json({
     error: req.user,
