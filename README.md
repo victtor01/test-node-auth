@@ -21,6 +21,9 @@ npx prisma migrate dev --name [name-migration]
 npx prisma studio
 ```
 
+Depois crie um arquivo .env
+`PRIVATE_KEY="EXEMPLE_KEY"`
+
 ## Objetivos
 
 - [x] Conexão com banco de dados
