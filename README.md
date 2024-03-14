@@ -127,6 +127,15 @@ o `AuthController` está retornando somente um token, porém poderiamos melhorar
 - É usado para fazer o refresh no token usado para acessar apis privadas.
 - É menos frequentemente transmitido pela rede, o que reduz a exposição a ataques de interceptação.
 
+### HTTPOnly
+Implementar cookies HTTPOnly é uma medida essencial para fortalecer a segurança do sistema e proteger os dados sensíveis dos usuários.
+
+- Mitiga Ataques de XSS: Reduz a ameaça de ataques de Cross-Site Scripting (XSS), protegendo os cookies contra acesso não autorizado por scripts do lado do cliente.
+
+- Protege Informações Sensíveis: Garante a confidencialidade dos dados dos usuários, especialmente tokens de autenticação, impedindo que sejam acessados por terceiros.
+
+- Conformidade com Padrões de Segurança: Demonstra compromisso com a segurança dos dados dos usuários, atendendo aos requisitos de conformidade e regulamentações.
+
 ## Outras ferramentas
 
 ### Docker
